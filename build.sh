@@ -14,7 +14,7 @@ MAX_THREADS=64
 
 echo "[build.sh]: clone sources..."
 df -hT $PWD
-I2BUILD_ROOT=$PWD
+GITHUB_WORKSPACE=$PWD
 git clone $REPO_URL -b $REPO_BRANCH openwrt
 
 echo "[build.sh]: updating feeds..."
@@ -27,11 +27,12 @@ chmod +x ../scripts/*.sh
 ../scripts/hook-feeds.sh
 
 echo "[build.sh]: installing feeds..."
+cd $GITHUB_WORKSPACE
 cd $OPENWRTROOT
 ./scripts/feeds install -a
 
 echo "[build.sh]: loading custom configurations..."
-cd $I2BUILD_ROOT
+cd $GITHUB_WORKSPACE
 [ -e files ] && mv files $OPENWRTROOT/files
 [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRTROOT/.config
 cat $CUSTOM_CONF >> $OPENWRTROOT/.config
@@ -43,6 +44,7 @@ cd $OPENWRTROOT
 make defconfig
 
 echo "[build.sh]: downloading packages..."
+cd $GITHUB_WORKSPACE
 cd $OPENWRTROOT
 cat .config
 make download -j50
@@ -51,6 +53,7 @@ find dl -size -1024c -exec ls -l {} \;
 find dl -size -1024c -exec rm -f {} \;
 
 echo "[build.sh]: compile packages..."
+cd $GITHUB_WORKSPACE
 cd $OPENWRTROOT
 echo -e "$(MAX_THREADS) thread compile"
 make tools/compile -j$(MAX_THREADS) || make tools/compile -j$(MAX_THREADS)
@@ -66,7 +69,8 @@ SUBTARGET=$(basename `pwd`)
 FIRMWARE=$PWD
 
 echo "[build.sh]: generating firmware..."
-cd $I2BUILD_ROOT/configs/opkg
+cd $GITHUB_WORKSPACE
+cd configs/opkg
 sed -i "s/subtarget/$SUBTARGET/g" distfeeds*.conf
 sed -i "s/target\//$TARGET\//g" distfeeds*.conf
 sed -i "s/platform/$PLATFORM/g" distfeeds*.conf

@@ -5,21 +5,21 @@ REPO_BRANCH=stable
 CONFIG_FILE=configs/lean/openwrt.config
 CUSTOM_CONF=configs/lean/i2cy.config
 DIY_SH=scripts/lean.sh
-KMODS_IN_FIRMWARE=true
-UPLOAD_RELEASE=true
-TZ=Asia/Shanghai
+export KMODS_IN_FIRMWARE=true
+export UPLOAD_RELEASE=true
+export TZ=Asia/Shanghai
 
-MAX_THREADS=64
+export MAX_THREADS=64
 
 
 echo "[build.sh]: clone sources..."
 df -hT $PWD
-GITHUB_WORKSPACE=$PWD
+export GITHUB_WORKSPACE=$PWD
 git clone $REPO_URL -b $REPO_BRANCH openwrt
 
 echo "[build.sh]: updating feeds..."
 cd openwrt
-OPENWRTROOT=$PWD
+export OPENWRTROOT=$PWD
 
 git clone --depth=1 https://github.com/DHDAXCW/packages customfeeds/packages
 git clone --depth=1 https://github.com/DHDAXCW/luci customfeeds/luci
@@ -63,10 +63,10 @@ make diffconfig
 make package/compile -j$(MAX_THREADS) IGNORE_ERRORS=1 || make package/compile -j$(MAX_THREADS) IGNORE_ERRORS=1
 make package/index
 cd $OPENWRTROOT/bin/packages/*
-PLATFORM=$(basename `pwd`)
+export PLATFORM=$(basename `pwd`)
 cd *
-SUBTARGET=$(basename `pwd`)
-FIRMWARE=$PWD
+export SUBTARGET=$(basename `pwd`)
+export FIRMWARE=$PWD
 
 echo "[build.sh]: generating firmware..."
 cd $GITHUB_WORKSPACE

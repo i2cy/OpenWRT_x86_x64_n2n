@@ -9,7 +9,7 @@ export KMODS_IN_FIRMWARE=true
 export UPLOAD_RELEASE=true
 export TZ=Asia/Shanghai
 
-export MAX_THREADS=64
+export nproc=64
 
 
 echo "[build.sh]: clone sources..."
@@ -55,12 +55,12 @@ find dl -size -1024c -exec rm -f {} \;
 echo "[build.sh]: compile packages..."
 cd $GITHUB_WORKSPACE
 cd $OPENWRTROOT
-echo -e "$(MAX_THREADS) thread compile"
-make tools/compile -j$(MAX_THREADS) || make tools/compile -j$(MAX_THREADS)
-make toolchain/compile -j$(MAX_THREADS) || make toolchain/compile -j$(MAX_THREADS)
-make target/compile -j$(MAX_THREADS) || make target/compile -j$(MAX_THREADS) IGNORE_ERRORS=1
+echo -e "$(nproc) thread compile"
+make tools/compile -j$(nproc) || make tools/compile -j$(nproc)
+make toolchain/compile -j$(nproc) || make toolchain/compile -j$(nproc)
+make target/compile -j$(nproc) || make target/compile -j$(nproc) IGNORE_ERRORS=1
 make diffconfig
-make package/compile -j$(MAX_THREADS) IGNORE_ERRORS=1 || make package/compile -j$(MAX_THREADS) IGNORE_ERRORS=1
+make package/compile -j$(nproc) IGNORE_ERRORS=1 || make package/compile -j$(nproc) IGNORE_ERRORS=1
 make package/index
 cd $OPENWRTROOT/bin/packages/*
 export PLATFORM=$(basename `pwd`)

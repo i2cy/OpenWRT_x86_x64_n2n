@@ -31,7 +31,7 @@ git clone $REPO_URL -b $REPO_BRANCH openwrt
 echo "[build.sh]: updating feeds..."
 cd openwrt
 export OPENWRTROOT=$PWD
-
+mkdir customfeeds
 git clone --depth=1 https://github.com/DHDAXCW/packages customfeeds/packages
 git clone --depth=1 https://github.com/DHDAXCW/luci customfeeds/luci
 chmod +x ../scripts/*.sh
@@ -53,6 +53,7 @@ cd $OPENWRTROOT
 ../scripts/preset-clash-core.sh amd64
 ../scripts/preset-terminal-tools.sh
 make defconfig
+make menuconfig
 
 echo "[build.sh]: downloading packages..."
 cd $GITHUB_WORKSPACE
